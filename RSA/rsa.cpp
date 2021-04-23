@@ -45,14 +45,11 @@ string decrypt(Integer n, Integer e, Integer d, Integer c) {
 	return recovered;
 }
 
-string getPublicKey() {
-	// RSA::PublicKey pubKey(privKey);
-	// privKey.GetPublicExponent();
+// Integer getPublicKey(Integer& n, Integer& d) {
+// 	return InvertibleRSAFunction::CalculateInverse();
+// }
 
-	return "";
-}
-
-void encryptTestCase(ofstream& fot) {
+void encryptTestCase(ofstream& fout) {
 	Integer n, e, d;
 
 	const char* ns[] = {
@@ -78,12 +75,12 @@ void encryptTestCase(ofstream& fot) {
 		
 		string ans = encrypt(n, e, plainTexts[i]);
 
-		fot << ans << '\n';
+		fout << ans << '\n';
 		cout << ans << '\n';
 	}
 }
 
-void decryptTestcase(ofstream& fot) {
+void decryptTestcase(ofstream& fout) {
 	Integer n, e, d, c;
 
 	const char* ds[] = {
@@ -98,22 +95,36 @@ void decryptTestcase(ofstream& fot) {
 		"0x154c638cd3615216",
 		"0xa1676afd68a2fc67dac32c633600b76fa90aca9f9cca5201490a20c8b01a061a"
 	};
+	const unsigned int bits[] = {
+		64,
+		256
+	};
 
 	int smlCase = 0, bigCase = 2;
 	for (int i = smlCase; i < bigCase; i++) {
 		n = Integer(ns[i]);
-		e = Integer(ds[i]);
+		d = Integer(ds[i]);
+		c = Integer(cs[i]);
 
-		
+		// e = ???
+		continue;
+
+		RSA::PrivateKey privKey;
+		privKey.Initialize(n, d, e);
+
+		string ans = decrypt(n, e, d, c);
+
+		cout << ans << '\n';
+		fout << ans << '\n';
 	}
 }
 
 int main() {
-	ofstream fot;
-	fot.open("output.txt");
+	ofstream fout;
+	fout.open("output.txt");
 
-	encryptTestCase(fot);
-	decryptTestcase(fot);
+	encryptTestCase(fout);
+	decryptTestcase(fout);
 
 	return 0;
 }
