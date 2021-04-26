@@ -45,10 +45,6 @@ string decrypt(Integer n, Integer e, Integer d, Integer c) {
 	return recovered;
 }
 
-// Integer getPublicKey(Integer& n, Integer& d) {
-// 	return InvertibleRSAFunction::CalculateInverse();
-// }
-
 void encryptTestCase(ofstream& fout) {
 	Integer n, e, d;
 
@@ -106,16 +102,25 @@ void decryptTestcase(ofstream& fout) {
 		d = Integer(ds[i]);
 		c = Integer(cs[i]);
 
-		// e = ???
-		continue;
+		e = Integer("0");
 
-		RSA::PrivateKey privKey;
-		privKey.Initialize(n, d, e);
+		while (true) {
+			RSA::PrivateKey privKey;
+			try {
+				privKey.Initialize(n, d, e);
+			} catch(InvalidArgument k) {
+				e = e + 1;
+				continue;
+			}
+			string ans = decrypt(n, e, d, c);
 
-		string ans = decrypt(n, e, d, c);
-
-		cout << ans << '\n';
-		fout << ans << '\n';
+			cout << "Publice Key = " << hex << e << '\n';
+			cout << ans << '\n';
+			
+			fout << hex << e << '\n';
+			fout << ans << '\n';
+			break;
+		}
 	}
 }
 
@@ -128,3 +133,15 @@ int main() {
 
 	return 0;
 }
+
+/* Output
+
+73dc304c7bf6a0fd
+4fd46914533f2735ca7e692f1d3ae5b0
+295de4ebe864de606d7e9c3de4bde243c3f7cb3447bca511dd665103e3949912
+Publice Key = 10001h
+Secret
+Publice Key = 11h
+ECC has shorter keys.
+
+*/
